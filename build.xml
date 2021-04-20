@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<property name="lib.dir" value="lib"/>
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="build/classes"/>
+	<property name="jar.dir" value="build/jar"/>
+	<property name="resource.dir" value="src/resources"/>
+	
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <javac destdir="${build.dir}" srcdir="${src.dir}">
+        	<classpath>
+	        	<fileset dir="${lib.dir}">
+		        	<include name="*.jar"/>
+		      	</fileset>
+        	</classpath>
+    	</javac>
+    	
+    	<copy todir="${build.dir}">
+	      <fileset dir="${resource.dir}" includes="**/*.properties"/>
+	    </copy>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/AppConverter.jar" basedir="${build.dir}">
+        	<zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="com/csw/AppRunner"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="${jar.dir}/AppConverter.jar" fork="true" >
+        	<arg value="${in}" />
+        	<arg value="${out}" />
+        </java>
+    </target>
+</project>
